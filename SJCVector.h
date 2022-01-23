@@ -20,16 +20,16 @@ class SJCVector {
 public:
 	SJCVector() : ptr_(nullptr), size_(0) { 
 		initSJCVector();  
-		std::cout << "Standard ctor\n"; 
+		std::cout << "Standard ctor of type " << typeid(T).name() << std::endl;
 	}
 	SJCVector(std::size_t size) : ptr_(size ? new T[size]() : nullptr), size_(size) { 
 		initSJCVector(); 
-		std::cout << "Standard ctor with size\n"; 
+		std::cout << "Standard ctor of type " << typeid(T).name() << " with size\n"; 
 	}
 	SJCVector(std::string name, size_t newSize=0) : ptr_(nullptr), size_(0), name_(name) {
 		initSJCVector(); 
 		resize(newSize);  
-		std::cout << "Standard ctor with name " << name_ << std::endl;
+		std::cout << "Standard ctor of type " << typeid(T).name() << " with name " << name_ << std::endl;
 	}
 	//Destructor needed to free the resource. This makes the class exception safe.
 	//Put all cleanup code in the destructor
@@ -137,7 +137,7 @@ public:
 		printSize();
 		printItemsLn();
 	}
-	void push_back(int newValue) {
+	void push_back(T newValue) {
 		if ((size_ == last_ + 1) || size_ == 0) {
 			std::cout << "On push_back: ";
 			resize();

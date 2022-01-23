@@ -5,6 +5,20 @@
 
 int main() {
 	std::cout << "Test standard constructor\n";
+
+	SJCVector<float> f;
+	f.push_back(1.00000f);
+	f.push_back(2.1);
+	f.push_back(3.2);
+	f.print();
+
+	SJCVector<std::string> ts("template strings");
+	ts.push_back("Fred");
+	ts.push_back("Apple");
+	ts.push_back("Bob");
+	ts.push_back("Sally");
+	ts.print();
+
 	SJCVector<int> n("nigel");
 	n.print();
 	n.push_back(3);
