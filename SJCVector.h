@@ -121,11 +121,11 @@ public:
 			return SJCVector();
 		}
 		std::cout << "Create local return vector\n";
-		SJCVector retVec(rhs);
+		SJCVector retVec(*this);
 		retVec.rename("retVec");
 		std::cout << "Added: ";
 		for (int i = 0; (i <= last_); i++) {
-			retVec.ptr_[i] += ptr_[i];
+			retVec.ptr_[i] += rhs.ptr_[i];
 			if(i > 0) std::cout << ", ";
 			std::cout << retVec.ptr_[i];
 		}
