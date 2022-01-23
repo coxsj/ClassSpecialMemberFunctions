@@ -9,8 +9,9 @@
 //This is a resource management class. Rule of three applies.
 //Move semantics gives us rule of five
 //Can move to rule of 4 1/2 if use by-value assignment operator
+template<typename T>
 class SJCVector {
-	int* ptr_;		//Class manages resource
+	T* ptr_;		//Class manages resource
 	size_t size_;
 	int first_;
 	int last_;
@@ -21,7 +22,7 @@ public:
 		initSJCVector();  
 		std::cout << "Standard ctor\n"; 
 	}
-	SJCVector(std::size_t size) : ptr_(size ? new int[size]() : nullptr), size_(size) { 
+	SJCVector(std::size_t size) : ptr_(size ? new T[size]() : nullptr), size_(size) { 
 		initSJCVector(); 
 		std::cout << "Standard ctor with size\n"; 
 	}
@@ -46,7 +47,7 @@ public:
 		rhs.printName(); std::cout << "to "; printNameLn();
 		//Make sure to delete any existing resource before creating a new one
 		//if (ptr_ != nullptr) delete[] ptr_;
-		ptr_ = new int[rhs.last_ + 1];
+		ptr_ = new T[rhs.last_ + 1];
 		last_ = rhs.last_;
 		size_ = rhs.last_ + 1;
 		//Copying the resource avoids double frees
@@ -155,7 +156,7 @@ public:
 	}
 	void resize(size_t newSize) {
 		if (newSize == 0) newSize = 1;
-		int* newptr = new int[newSize];
+		T* newptr = new T[newSize];
 		//TODO exception safety. Did the memory allocate?
 		if (!newptr) {
 			std::cout << "\nError: resize failed\n";

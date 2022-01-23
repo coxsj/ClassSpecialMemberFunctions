@@ -5,14 +5,14 @@
 
 int main() {
 	std::cout << "Test standard constructor\n";
-	SJCVector n("nigel");
+	SJCVector<int> n("nigel");
 	n.print();
 	n.push_back(3);
 	n.push_back(56);
 	n.print();
 
 	std::cout << "\nTest resizing\n";
-	SJCVector k("kelly");
+	SJCVector<int> k("kelly");
 	k.print();
 	k.resize(5);
 	k.print();
@@ -25,7 +25,7 @@ int main() {
 	k.print();
 
 	std::cout << "\nTest copy constructor\n";
-	SJCVector m = n;
+	SJCVector<int> m = n;
 	m.rename("mary");
 	m.push_back(9);
 	m.push_back(7);
@@ -36,7 +36,7 @@ int main() {
 	n.print();
 	
 	std::cout << "\nTest move constructor and + operator overload\n";
-	SJCVector o(n + m);
+	SJCVector<int> o(n + m);
 	o.rename("oscar");
 	o.print();
 
@@ -46,7 +46,7 @@ int main() {
 	m.print();
 
 	std::cout << "\nTest move assignment operator\n";
-	SJCVector p("pelle");
+	SJCVector<int> p("pelle");
 	p = n + o;
 	n.print();
 	o.print();
