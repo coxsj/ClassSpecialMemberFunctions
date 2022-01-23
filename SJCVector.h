@@ -112,12 +112,12 @@ public:
 		a.swap(b);
 	}
 	SJCVector operator+(const SJCVector& rhs) {
-		//Only works for types where '+" is defined
 		//This routine applies element by element addition
+		//Todo: Only works for types where '+" is defined		
 		std::cout << "Addition operator overload for SJCVector\n";
 		if ((rhs.size_  == 0) 
-		|| (size_ == 0)
-		|| (rhs.last_ != last_)) {
+		||	(size_ == 0)
+		||	(rhs.last_ != last_){
 			std::cout << "Cannot add vectors of zero size or unequal size\n";
 			return SJCVector();
 		}
