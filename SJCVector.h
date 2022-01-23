@@ -58,7 +58,7 @@ public:
 	//Fast because rhs wont be missed, just steal rhs's guts.
 	SJCVector(SJCVector&& rhs) noexcept : SJCVector()  {
 		std::cout << "Move ctor. Stole guts of rvalue: "; rhs.printNameLn();
-		ptr_ = std::exchange(rhs.ptr_, nullptr);
+		ptr_ = std::exchange(rhs.ptr_, nullptr);	//ptr_ gets rhs.ptr_, rhs.ptr_ gets nullptr.
 		size_ = std::exchange(rhs.size_, 0);
 		last_ = std::exchange(rhs.last_, -1);
 	}
@@ -111,7 +111,8 @@ public:
 		a.swap(b);
 	}
 	SJCVector operator+(const SJCVector& rhs) {
-		//Adds element by element
+		//Only works for types where '+" is defined
+		//This routine applies element by element addition
 		std::cout << "Addition operator overload for SJCVector\n";
 		if ((rhs.size_  == 0) 
 		|| (size_ == 0)
