@@ -13,8 +13,8 @@ template<typename T>
 class SJCVector {
 	T* ptr_;		//Class manages resource
 	size_t size_;
-	int first_;
-	int last_;
+	size_t first_;
+	long long last_;
 	std::string name_;
 
 public:
