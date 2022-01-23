@@ -19,6 +19,16 @@ int main() {
 	ts.push_back("Sally");
 	ts.print();
 
+	SJCVector<std::string> ts1("template strings");
+	ts1.push_back("Guinn");
+	ts1.push_back("Computer");
+	ts1.push_back("theBuilder");
+	ts1.push_back("Struthers");
+	ts1.print();
+
+	SJCVector ts2(ts + ts1);
+	ts2.print();
+
 	SJCVector<int> n("nigel");
 	n.print();
 	n.push_back(3);
