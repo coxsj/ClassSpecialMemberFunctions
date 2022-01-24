@@ -116,7 +116,7 @@ public:
 		std::cout << "Addition operator overload for SJCVector\n";
 		if ((rhs.size_  == 0) 
 		||	(size_ == 0)
-		||	(rhs.last_ != last_){
+		||	(rhs.last_ != last_)){
 			std::cout << "Cannot add vectors of zero size or unequal size\n";
 			return SJCVector();
 		}
@@ -156,7 +156,7 @@ public:
 	}
 	void resize(size_t newSize) {
 		if (newSize == 0) newSize = 1;
-		std::unique_ptr<T[]> newptr = std::make_unique<T[]>(newSize);
+		//std::unique_ptr<T[]> newptr = std::make_unique<T[]>(newSize);
 		//TODO exception safety. Did the memory allocate?
 		if (auto newptr = std::make_unique<T[]>(newSize)) {
 			if (last_ >= 0) {
