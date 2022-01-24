@@ -155,7 +155,7 @@ public:
 	}
 	void resize(size_t newSize) {
 		if (newSize == 0) newSize = 1;
-		std::unique_ptr<int[]> newptr = std::make_unique<int[]>(newSize);
+		//std::unique_ptr<T[]> newptr = std::make_unique<T[]>(newSize);
 		//TODO exception safety. Did the memory allocate?
 		if (auto newptr = std::make_unique<int[]>(newSize)) {
 			if (last_ >= 0) {
