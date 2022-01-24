@@ -52,6 +52,6 @@ int main() {
 	o.print();
 	p.print();
 
-	std::cout << "\nEnd of tests\n\n";
+	std::cout << "\n~~~End of tests~~~\n\n";
 
 }
