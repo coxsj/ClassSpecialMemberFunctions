@@ -10,6 +10,7 @@ int main() {
 	f.push_back(1.00000f);
 	f.push_back(2.1);
 	f.push_back(3.2);
+	f.rename("float");
 	f.print();
 
 	SJCVector<std::string> ts("template strings");
@@ -19,7 +20,7 @@ int main() {
 	ts.push_back("Sally");
 	ts.print();
 
-	SJCVector<std::string> ts1("template strings");
+	SJCVector<std::string> ts1("template1 strings");
 	ts1.push_back("Guinn");
 	ts1.push_back("Computer");
 	ts1.push_back("theBuilder");
@@ -27,6 +28,7 @@ int main() {
 	ts1.print();
 
 	SJCVector ts2(ts + ts1);
+	ts2.rename("template2 strings");
 	ts2.print();
 
 	SJCVector<int> n("nigel");
@@ -34,6 +36,11 @@ int main() {
 	n.push_back(3);
 	n.push_back(56);
 	n.print();
+
+	//std::cout << "\nTest assigning one type to another\n";
+	//f = ts; Will not compile. No assignment operator taking string type and assigning to float type
+	//ts = f; Will not compile. No assignment operator taking float type and assigning to string type
+	//f = n; Will not compile. No assignment operator taking int type and assigning to float type
 
 	std::cout << "\nTest resizing\n";
 	SJCVector<int> k("kelly");

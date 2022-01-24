@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-#define BY_VAL_OPERATOR
+#define BY_VAL_OPERATOR //Selects between by-val assignment operator and copy/move assignment operators
 
 //This is a resource management class. Rule of three applies.
 //Move semantics gives us rule of five
@@ -14,7 +14,8 @@ class SJCVector {
 	std::unique_ptr<T[]> ptr_;		//Class manages resource
 	size_t size_;
 	size_t first_;
-	long long last_;
+	long long last_;	//cant be size_t as needs to go negative
+	const long long emptyVec = -1;
 	std::string name_;
 
 public:
@@ -60,7 +61,7 @@ public:
 		std::cout << "Move ctor. Stole guts of rvalue: "; rhs.printNameLn();
 		ptr_ = std::exchange(rhs.ptr_, nullptr);//ptr_ gets rhs.ptr_, rhs.ptr_ gets nullptr.
 		size_ = std::exchange(rhs.size_, 0);
-		last_ = std::exchange(rhs.last_, -1);
+		last_ = std::exchange(rhs.last_, emptyVec);
 	}
 #ifdef BY_VAL_OPERATOR
 	//By value assignment operator
@@ -182,7 +183,7 @@ private:
 		size_ = initialSize;
 		ptr_ = std::make_unique<T[]>(size_);
 		first_ = 0;
-		last_ = -1;
+		last_ = emptyVec;
 	}
 	void printItems() const {
 		if (last_ < 0 || size_ == 0) return;
