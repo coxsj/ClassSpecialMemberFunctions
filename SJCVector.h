@@ -11,32 +11,31 @@
 //Can move to rule of 4 1/2 if use by-value assignment operator
 template<typename T>
 class SJCVector {
-	T* ptr_;		//Class manages resource
+	std::unique_ptr<T[]> ptr_;		//Class manages resource
 	size_t size_;
 	size_t first_;
 	long long last_;
 	std::string name_;
 
 public:
-	SJCVector() : ptr_(nullptr), size_(0) { 
-		initSJCVector();  
-		std::cout << "Standard ctor of type " << typeid(T).name() << std::endl;
+	SJCVector() { 
+		initSJCVector(1);  
+		std::cout << "Standard ctor\n"; 
 	}
-	SJCVector(std::size_t size) : ptr_(size ? new T[size]() : nullptr), size_(size) { 
-		initSJCVector(); 
-		std::cout << "Standard ctor of type " << typeid(T).name() << " with size\n"; 
+	SJCVector(std::size_t size) { 
+		initSJCVector(size); 
+		std::cout << "Standard ctor with size\n"; 
 	}
-	SJCVector(std::string name, size_t newSize=0) : ptr_(nullptr), size_(0), name_(name) {
-		initSJCVector(); 
-		resize(newSize);  
-		std::cout << "Standard ctor of type " << typeid(T).name() << " with name " << name_ << std::endl;
+	SJCVector(std::string name, size_t size=1) : name_(name) {
+		initSJCVector(size); 
+		std::cout << "Standard ctor with name " << name_ << std::endl;
 	}
-	//Destructor needed to free the resource. This makes the class exception safe.
-	//Put all cleanup code in the destructor
+	//Destructor needed to free the resource. (But not if you use smart pointers to ref the resource.
+	//Put all cleanup code in the destructor. This makes the class exception safe.
+
 	~SJCVector() {
 		printName();
 		std::cout << "dtor\n";
-		delete[] ptr_;
 	}
 	//Copy constructor needed to correctly copy the resource.
 	// Compiler generated default copy constructor just does an element by element copy,
@@ -46,20 +45,20 @@ public:
 		std::cout << "Copy ctor. Copying data from ";
 		rhs.printName(); std::cout << "to "; printNameLn();
 		//Make sure to delete any existing resource before creating a new one
-		//if (ptr_ != nullptr) delete[] ptr_;
-		ptr_ = new T[rhs.last_ + 1];
-		last_ = rhs.last_;
-		size_ = rhs.last_ + 1;
+		//ptr_ = new int[rhs.last_ + 1];
+		initSJCVector(rhs.size_);
 		//Copying the resource avoids double frees
-		std::copy(rhs.ptr_, rhs.ptr_ + last_ + 1, ptr_);
+		const auto& srcBegin = rhs.ptr_.get();
+		std::copy(srcBegin, std::next(srcBegin, size_), ptr_.get());
+		last_ = rhs.last_;
 		rename("copy");
 	}
 	//Move constructor (copy constructor for rvalues)
 	//Move constructor transfers ownership of the resource from rhs to this
 	//Fast because rhs wont be missed, just steal rhs's guts.
-	SJCVector(SJCVector&& rhs) noexcept : SJCVector()  {
+	SJCVector(SJCVector&& rhs) noexcept {
 		std::cout << "Move ctor. Stole guts of rvalue: "; rhs.printNameLn();
-		ptr_ = std::exchange(rhs.ptr_, nullptr);	//ptr_ gets rhs.ptr_, rhs.ptr_ gets nullptr.
+		ptr_ = std::exchange(rhs.ptr_, nullptr);//ptr_ gets rhs.ptr_, rhs.ptr_ gets nullptr.
 		size_ = std::exchange(rhs.size_, 0);
 		last_ = std::exchange(rhs.last_, -1);
 	}
@@ -145,7 +144,7 @@ public:
 		}
 		if (size_ > last_ + 1) {
 			last_++;
-			*(ptr_ + last_) = newValue;
+			ptr_[last_] = newValue;
 		}
 		else std::cout << "push_back fail due to full\n";
 	}
@@ -157,33 +156,38 @@ public:
 	}
 	void resize(size_t newSize) {
 		if (newSize == 0) newSize = 1;
-		T* newptr = new T[newSize];
+		std::unique_ptr<T[]> newptr = std::make_unique<T[]>(newSize);
 		//TODO exception safety. Did the memory allocate?
-		if (!newptr) {
+		if (auto newptr = std::make_unique<T[]>(newSize)) {
+			if (last_ >= 0) {
+				//Data to copy
+				//New size_ may be smaller than current data
+				if (newSize <= last_) last_ = newSize - 1;
+				//new size should not be 0
+				const auto& srcBegin = ptr_.get();
+				if (newSize > 0) std::copy(srcBegin, std::next(srcBegin, size_), newptr.get());
+				//old: if (newSize > 0) std::copy(ptr_, ptr_[0 + last_ + 1], newptr);
+			}
+			ptr_= std::move( newptr );
+			size_ = newSize;
+			std::cout << "Resized "; printName(); std::cout << "to " << size_ << " with " << last_ + 1 << " items\n";
+		}
+		else {
 			std::cout << "\nError: resize failed\n";
 			return;
-		}
-		if (last_ >= 0) {
-			//Data to copy
-			//New size_ may be smaller than current data
-			if (newSize <= last_) last_ = newSize - 1;
-			//new size should not be 0
-			if (newSize > 0) std::copy(ptr_, ptr_ + last_ + 1, newptr);
-		}
-		delete[] ptr_;
-		ptr_ = newptr;
-		size_ = newSize;
-		std::cout << "Resized "; printName(); std::cout << "to " << size_ << " with " << last_ + 1 << " items\n";
+		}		
 	}
 private:
-	void initSJCVector() {
+	void initSJCVector(size_t initialSize=1) {
+		size_ = initialSize;
+		ptr_ = std::make_unique<T[]>(size_);
 		first_ = 0;
 		last_ = -1;
 	}
 	void printItems() const {
 		if (last_ < 0 || size_ == 0) return;
 		for (int i = 0; i <= last_; i++) {
-			std::cout << *(ptr_ + i);
+			std::cout << ptr_[i];
 			if (i != last_) std::cout << ", ";
 		}
 		std::cout << " ";
