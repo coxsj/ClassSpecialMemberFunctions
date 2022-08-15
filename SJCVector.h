@@ -37,6 +37,10 @@
 // the COPY ASSIGNMENT constructor is at risk of deleting the data in the original object.
 // So, COPY ASSIGNEMENT OPERATOR should use COPY CONSTRUCTOR and a swap member function.
 // RAII RESOURCE ACQUISITION IS INITIALIZATION: Slogan is about initialization, but it's really about CLEANUP!
+// RAII + Exception safety. When an exception occurs, stack unwinds all the way till a suitable catch handler is found.
+// For each local scope between the throw and the catch, the runtime invokes the destructors of all local variables
+// in that scope. So, to avoid leaks, put all CLEANUP code in your DESTRUCTORS.
+// To make an object NON-COPYABLE, explicitly set the copy constructor and copy assignment operator to = delete.
 
 class SJCVector {
 	std::unique_ptr<int[]> ptr_ = nullptr;		//Class manages resource
