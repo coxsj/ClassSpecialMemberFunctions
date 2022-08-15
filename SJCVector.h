@@ -3,18 +3,27 @@
 #include <algorithm>
 #include <iostream>
 
+// References
+// =========
+// Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019
+//		https://www.youtube.com/watch?v=7Qgd9B1KuMQ
+// Back To Basics: The Special Member Functions - Klaus Iglberger - CppCon 2021
+//		https://www.youtube.com/watch?v=9BM5LAvNtus
 
 #define BY_VAL_OPERATOR
 
-//This is a resource management class. Rule of three applies.
+//This is a resource management class. 
+// Resource is anything that requires special manual management
+// e.g Allocated memory, file handles, mutex locks, c++ trheads etc.
+// Rule of three applies.
 //Move semantics gives us rule of five
 //Can move to rule of 4 1/2 if use by-value assignment operator
 class SJCVector {
-	std::unique_ptr<int[]> ptr_;		//Class manages resource
-	size_t size_;
+	std::unique_ptr<int[]> ptr_ = nullptr;		//Class manages resource
+	size_t size_{ 0 };
 	size_t first_;
 	long long last_;
-	std::string name_;
+	std::string name_{ "unnamed" };
 
 public:
 	SJCVector() { 
