@@ -12,12 +12,32 @@
 
 #define BY_VAL_OPERATOR
 
-//This is a resource management class. 
+// This is a resource management class. Rule of three applies (Destructor, Copy Constructor, Copy Assignment).
 // Resource is anything that requires special manual management
-// e.g Allocated memory, file handles, mutex locks, c++ trheads etc.
-// Rule of three applies.
-//Move semantics gives us rule of five
-//Can move to rule of 4 1/2 if use by-value assignment operator
+// e.g Allocated memory, file handles, mutex locks, c++ threads etc.
+// Whenever the rule of three applies, use the copy-and-swap idiom to implement assignement
+// Move semantics gives us rule of five
+// Can move to rule of 4 1/2 if use by-value assignment operator
+
+// Rationale
+// =======
+// DESTRUCTOR is responsible for freeing the resources correctly.
+// If you write a destructor, you probably need to write a copy constructor AND a copy assignment operator.
+// COPY CONSTRUCTOR is responsible for duplicating resources to avoid double-frees. Double-frees occur when
+// a new object is created via naively copying a pointer which of course points back to the resource owned by
+// the original object. That's what the default copy constructor does.
+// NOTE: Initialization is not assignment!
+// Classname w = v; // Initialization (construction) of a new object. It calls the COPY CONSTRUCTOR
+// is not the same as...
+// Classname w; w = v; // This is an assignment to the existing object w. It calls an ASSIGNMENT OPERATOR
+// So, assignment has potentially the same problem as copying.
+// COPY ASSIGNMENT OPERATOR should be defined using COPY CONSTRUCTOR  and a swap member function.
+// COPY ASSIGNMENT OPERATOR has to free the left-hand resource and copy the right-hand one.
+// In the case of self assignment (v = v; or assignment to self-referential data structures e.g. tree that result in v = v;)
+// the COPY ASSIGNMENT constructor is at risk of deleting the data in the original object.
+// So, COPY ASSIGNEMENT OPERATOR should use COPY CONSTRUCTOR and a swap member function.
+// RAII RESOURCE ACQUISITION IS INITIALIZATION: Slogan is about initialization, but it's really about CLEANUP!
+
 class SJCVector {
 	std::unique_ptr<int[]> ptr_ = nullptr;		//Class manages resource
 	size_t size_{ 0 };
@@ -38,17 +58,23 @@ public:
 		initSJCVector(size); 
 		std::cout << "Standard ctor with name " << name_ << std::endl;
 	}
-	//Destructor needed to free the resource. (But not if you use smart pointers to ref the resource.
-	//Put all cleanup code in the destructor. This makes the class exception safe.
+	// Destructor needed to free the resource. (But not if you use smart pointers to ref the resource).
+	// Put all cleanup code in the destructor. This makes the class exception safe.
+	// There is only ever one destructor for a class.
 
 	~SJCVector() {
 		printName();
 		std::cout << "dtor\n";
 	}
-	//Copy constructor needed to correctly copy the resource.
+	// COPY CONSTRUCTOR
+	// ===================
+	// Copy constructor is needed to correctly copy the resource.
 	// Compiler generated default copy constructor just does an element by element copy,
 	// even for heap pointers, file handles etc.
-	// Note we cant just give the new object the resource belonging to the rhs object
+	// This leads to DOUBLE-FREEING if there is a Destructor (which frees the resource) and only 
+	// the default copy constructor (which copies just the pointer/Handle etc, but does not create a new resource
+	// thus leaving them pointing to the same resource owned by the object that was copied.
+	// And of course we cant just give the new object the resource belonging to the rhs object!!
 	SJCVector(const SJCVector& rhs) {
 		std::cout << "Copy ctor. Copying data from ";
 		rhs.printName(); std::cout << "to "; printNameLn();
