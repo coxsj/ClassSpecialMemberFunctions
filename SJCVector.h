@@ -77,6 +77,14 @@
 // DESTRUCTOR with unique_ptr becomes ~Classname() = default; // std::unique_ptr destroys the resource.
 // wherein the transfer of owenership is handled by unique_ptr when it is moved into the newly constructed object.
 
+// SPECIAL MEMBER FUNCTION ROLES
+// ===============================
+// Destructor - frees the resource.
+// Copy Constructor - copies the resource.
+// Move Constructor - transfers ownership of the resource and nulls/disengages/etc the rhs.
+// Copy Assignment Operator - frees the left-hand resource and copies the right-hand one.
+// Move Assignment Operator - frees the left-hand resource and transfers ownership of the right-hand one.
+
 #define BY_VAL_OPERATOR
 
 class SJCVector {
@@ -87,6 +95,8 @@ class SJCVector {
 	std::string name_{ "unnamed" };
 
 public:
+	// Rules of three, four and a half, five and zero DO NOT apply to constructors.
+	// They only apply to functions implicit in managing resources.
 	SJCVector() : SJCVector(1) { 
 		std::cout << "Standard ctor\n"; 
 	}
